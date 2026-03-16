@@ -24,6 +24,7 @@ export class Order {
 
   public orderId: any = signal(null);
   public calculationResult: any = signal(null);
+  public isCalculating = signal(false);
 
   constructor(private formBuilder: FormBuilder) {
     this.routeForm = this.formBuilder.group({
@@ -61,8 +62,10 @@ export class Order {
 
   public calculate() {
     this.calculationResult.set(null);
+    this.isCalculating.set(true);
 
     if (!this.map || this.routeForm.invalid) {
+      this.isCalculating.set(false);
       return;
     }
 
@@ -110,6 +113,7 @@ export class Order {
           total,
           speed
         });
+        this.isCalculating.set(false);
       } catch (err) {
         this.failedCalculation();
       }
@@ -119,6 +123,7 @@ export class Order {
   }
 
   private failedCalculation() {
+    this.isCalculating.set(false);
     this.calculationResult.set(null);
     alert('Не удалось построить маршрут. Проверьте адреса и выбранные параметры.');
   }
